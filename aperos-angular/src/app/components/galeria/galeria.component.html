@@ -1,0 +1,24 @@
+<div class="galeria-container">
+  <h2 class="titulo-seccion">Catálogo de Excelencia Llanera</h2>
+  
+  <div class="grid-productos">
+    <div class="producto-card" *ngFor="let p of productos">
+      <div class="imagen-container">
+        <img [src]="p.imagen" [alt]="p.nombre">
+        <span class="badge" *ngIf="p.destacado">Destacado</span>
+      </div>
+      
+      <div class="producto-info">
+        <p class="categoria">{{ p.categoria }}</p>
+        <h3>{{ p.nombre }}</h3>
+        <p class="material"><b>Material:</b> {{ p.material }}</p>
+        <p class="descripcion">{{ p.descripcion }}</p>
+        <p class="precio">{{ p.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
+        
+        <button class="btn-comprar">
+          <i class="fas fa-shopping-cart"></i> Consultar Disponibilidad
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
