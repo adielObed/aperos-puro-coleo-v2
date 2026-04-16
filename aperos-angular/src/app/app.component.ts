@@ -7,20 +7,25 @@ import { Component, OnInit, signal, computed, inject, HostListener } from '@angu
 import { CommonModule }  from '@angular/common';
 import { FormsModule }   from '@angular/forms';
 import { ProductService, Producto } from './product.service';
+import { AuthService } from './services/auth.service';
+import { ProductDetailComponent } from './components/product-detail/product-detail.component';
+import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
+import { AuthComponent } from './components/auth/auth.component';
 import { 
-  LucideAngularModule, ShoppingCart, Search, User, Heart, Menu, X, Star, ChevronDown, Instagram, Facebook, Mail, Phone 
+  LucideAngularModule, ShoppingCart, Search, User, Heart, Menu, X, Star, ChevronDown, Instagram, Facebook, Mail, Phone, Edit, Trash2, Plus 
 } from 'lucide-angular';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, ProductDetailComponent, AdminPanelComponent, AuthComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./styles.css']
 })
 export class AppComponent implements OnInit {
 
   private productService = inject(ProductService);
+  public authService = inject(AuthService);
 
   // ── State ──────────────────────────────────────────────
   productos             = signal<Producto[]>([]);
@@ -40,8 +45,32 @@ export class AppComponent implements OnInit {
   email                 = signal('');
   subscribed            = signal(false);
 
+  productoSeleccionado  = signal<Producto | null>(null);
+
+  // ── UI Sidebars ────────────────────────────────────────
+  isCartOpen = signal(false);
+  isWishOpen = signal(false);
+  isLangOpen = signal(false);
+  isHelpOpen = signal(false);
+
+  // ── Admin & Modal State ────────────────────────────────
+  showModal = signal(false);
+  modalMode = signal<'create' | 'edit'>('create');
+  isSaving = signal(false);
+  
+  formData = signal<Partial<Producto>>({
+    nombre: '',
+    categoria: '',
+    material: '',
+    precio: 0,
+    stock: 0,
+    descripcion: '',
+    imagen: '',
+    destacado: false
+  });
+
   // ── Datos estáticos ────────────────────────────────────
-  categoryTabs = ['Todos', 'Sombreros', 'Sillas de Montar', 'Botas', 'Frenos & Bocados', 'Cotizas', 'Casqueras'];
+  categoryTabs = ['Hombre', 'Mujer', 'Niño', 'Accesorios', 'Talabarteria'];
 
   sidebarCats: [string, number][] = [
     ['Sombreros', 24],
@@ -62,6 +91,11 @@ export class AppComponent implements OnInit {
   footerExplorar = ['Nuestra Historia', 'Catálogo Completo', 'Blog del Llanero', 'Eventos & Coleo'];
   footerAyuda = ['Rastrear Pedido', 'Tallas de Sombreros', 'Cuidado del Cuero', 'Contacto'];
 
+  // ── Utils ──────────────────────────────────────────────
+  private normalize(str: string): string {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+  }
+
   // ── Computed ───────────────────────────────────────────
   priceDisplay = computed(() => {
     return (this.priceRange() * 50000).toLocaleString('es-CO', {
@@ -71,30 +105,56 @@ export class AppComponent implements OnInit {
     });
   });
 
+  hasActiveFilters = computed(() => {
+    return this.categoriaActiva() !== 'Todos' || this.searchTerm() !== '';
+  });
+
   productosFiltrados = computed(() => {
     const lista = this.productos();
     const cat = this.categoriaActiva();
     const mats = this.selectedMaterials();
     const max = this.priceRange() * 50000; 
-    const busqueda = this.searchTerm().toLowerCase().trim(); 
+    const busqueda = this.normalize(this.searchTerm()); 
 
-    return lista.filter(p => {
+    let filtrados = lista.filter(p => {
       const matchCat = cat === 'Todos' || p.categoria === cat;
       const matchMat = mats.length === 0 || mats.includes(p.material);
       const matchPrice = p.precio <= max;
       
-      const matchBusqueda = busqueda === '' || 
-        (p.nombre?.toLowerCase().includes(busqueda)) || 
-        (p.descripcion?.toLowerCase().includes(busqueda));
+      const normNombre = this.normalize(p.nombre || '');
+      const normDesc = this.normalize(p.descripcion || '');
+      
+      // Búsqueda Profesional: Permite coincidencias parciales y de palabras sueltas
+      const palabrasBusqueda = busqueda.split(' ').filter(word => word.length > 0);
+      const matchBusqueda = palabrasBusqueda.length === 0 || palabrasBusqueda.every(palabra => 
+        normNombre.includes(palabra) || normDesc.includes(palabra)
+      );
 
       return matchCat && matchMat && matchPrice && matchBusqueda;
     });
+
+    // Búsqueda Sugerida / Por aproximación (Si no hay resultados exactos)
+    if (filtrados.length === 0 && busqueda.length > 2) {
+      filtrados = lista.filter(p => {
+        const normNombre = this.normalize(p.nombre || '');
+        // Si al menos el 50% de las letras coinciden o es una sub-palabra cercana
+        return busqueda.split('').slice(0, 3).every(char => normNombre.includes(char));
+      }).slice(0, 3); // Solo 3 sugerencias
+    }
+
+    return filtrados;
   });
 
   // ── Lifecycle ──────────────────────────────────────────
   ngOnInit() {
-    // Traer productos de Node.js
-    this.productService.getProductos().subscribe({
+    this.refreshData();
+  }
+
+  refreshData() {
+    this.cargando.set(true);
+    // Llamar al backend con el término de búsqueda si existe (Sincronización Backend/Frontend)
+    const term = this.searchTerm();
+    this.productService.getProductos(term).subscribe({
       next: (res) => {
         if(res.status === 'ok') {
           this.productos.set(res.data);
@@ -121,15 +181,55 @@ export class AppComponent implements OnInit {
   }
 
   // ── Handlers ───────────────────────────────────────────
-  addToCart():  void { this.cartCount.update(c => c + 1); }
-  addToWish():  void { this.wishCount.update(c => c + 1); }
+  addToCart():  void { 
+    this.cartCount.update(c => c + 1); 
+    this.isCartOpen.set(true);
+  }
+  
+  addToWish():  void { 
+    this.wishCount.update(c => c + 1); 
+    this.isWishOpen.set(true);
+  }
+  
+  toggleCart(): void { this.isCartOpen.update(v => !v); }
+  toggleWish(): void { this.isWishOpen.update(v => !v); }
   toggleMobileMenu(): void { this.mobileMenuOpen.update(v => !v); }
 
-  setCat(c: string): void { this.categoriaActiva.set(c); }
+  setCat(c: string): void { 
+    this.categoriaActiva.set(c); 
+    this.productoSeleccionado.set(null); // volver al listado al cambiar categoria
+    
+    // Scroll al contenedor de productos
+    setTimeout(() => {
+      const element = document.getElementById('productos');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 50);
+  }
 
+  verDetalle(p: Producto): void {
+    this.productoSeleccionado.set(p);
+    const element = document.getElementById('productos');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  volverListado(): void {
+    this.productoSeleccionado.set(null);
+  }
+
+  searchTimeout: any;
   setSearch(e: Event): void {
     const element = e.target as HTMLInputElement;
     this.searchTerm.set(element.value);
+    
+    // Debounce para no saturar el servidor en cada tecla
+    if (this.searchTimeout) clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => {
+      this.refreshData();
+    }, 400);
   }
 
   clearFilters(): void {
@@ -159,6 +259,72 @@ export class AppComponent implements OnInit {
   handleSubscribe(): void {
     if (this.email().includes('@')) {
       this.subscribed.set(true);
+    }
+  }
+
+  // ── CRUD Handlers ──────────────────────────────────────
+  openCreateModal(): void {
+    this.formData.set({ nombre: '', categoria: '', material: '', precio: 0, stock: 0, descripcion: '', imagen: '', destacado: false });
+    this.modalMode.set('create');
+    this.showModal.set(true);
+  }
+
+  openEditModal(p: Producto): void {
+    this.formData.set({ ...p });
+    this.modalMode.set('edit');
+    this.showModal.set(true);
+  }
+
+  closeModal(): void {
+    this.showModal.set(false);
+  }
+
+  saveProduct(): void {
+    const data = this.formData() as Producto;
+    if (!data.nombre || !data.categoria || !data.material || !data.descripcion) {
+      alert("Por favor completa los campos requeridos");
+      return;
+    }
+    
+    this.isSaving.set(true);
+    
+    if (this.modalMode() === 'create') {
+      this.productService.createProducto(data).subscribe({
+        next: (res) => {
+          if (res.status === 'ok') {
+            this.productos.update(list => [...list, res.data]);
+            this.closeModal();
+          }
+          this.isSaving.set(false);
+        },
+        error: () => this.isSaving.set(false)
+      });
+    } else {
+      if (data._id) {
+        this.productService.updateProducto(data._id, data).subscribe({
+          next: (res) => {
+            if (res.status === 'ok') {
+              this.productos.update(list => list.map(p => p._id === data._id ? res.data : p));
+              this.closeModal();
+            }
+            this.isSaving.set(false);
+          },
+          error: () => this.isSaving.set(false)
+        });
+      }
+    }
+  }
+
+  deleteProduct(id: string | undefined): void {
+    if (!id) return;
+    if (confirm('¿Estás seguro que deseas eliminar el producto? Esta acción no se puede deshacer.')) {
+      this.productService.deleteProducto(id).subscribe({
+        next: (res) => {
+          if (res.status === 'ok') {
+            this.productos.update(list => list.filter(p => p._id !== id));
+          }
+        }
+      });
     }
   }
 }
