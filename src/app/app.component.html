@@ -19,12 +19,11 @@
   </div>
 
   <nav class="navbar">
-    <a href="#" class="logo-wrap">
+    <a href="#" style="display:flex; align-items:center; text-decoration: none;">
       <span class="logo-text">APEROS</span>
       <span class="logo-text logo-text--gold">PURO COLEO</span>
     </a>
 
-    <!-- Desktop Nav (Hidden on Mobile) -->
     <div class="nav-links">
       <a href="#Hombre" (click)="$event.preventDefault(); setCat('Hombre')" class="nav-link">Hombre</a>
       <a href="#Mujer" (click)="$event.preventDefault(); setCat('Mujer')" class="nav-link">Mujer</a>
@@ -35,8 +34,7 @@
     </div>
 
     <div class="nav-actions">
-      <!-- Search (Desktop only inline) -->
-      <div class="search-box desktop-only">
+      <div class="search-box">
         <input type="text" class="search-input" (input)="setSearch($event)" [value]="searchTerm()"
           placeholder="Buscar...">
         <button class="nav-icon" (click)="refreshData()">
@@ -48,40 +46,42 @@
         </button>
       </div>
 
-      <button class="nav-icon desktop-only" (click)="toggleWish()">
-        <div class="badge-wrap">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-          </svg>
-          <span class="badge">{{ wishCount() }}</span>
-        </div>
-      </button>
+      <div class="badge-wrap nav-icon" (click)="toggleWish()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <span class="badge">{{ wishCount() }}</span>
+      </div>
 
-      <button class="nav-icon" (click)="toggleCart()">
-        <div class="badge-wrap">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="9" cy="21" r="1"></circle>
-            <circle cx="20" cy="21" r="1"></circle>
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-          </svg>
-          <span class="badge">{{ cartCount() }}</span>
-        </div>
-      </button>
+      <div class="badge-wrap nav-icon" (click)="toggleCart()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        <span class="badge">{{ cartCount() }}</span>
+      </div>
 
-      <button class="btn-gold btn-sm nav-cart-btn desktop-only" (click)="toggleCart()">
-        VER CARRITO
-      </button>
-
-      <div class="nav-account-wrap desktop-only">
-        <button class="nav-icon" (click)="authService.toggleAuthModal('login')">
+      <div class="nav-account-wrap" style="display:flex; align-items:center; gap:8px;">
+        <button class="nav-icon" aria-label="Cuenta" (click)="authService.isLoggedIn() ? authService.logout() : authService.toggleAuthModal('login')">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>
           </svg>
         </button>
+        
+        <div class="auth-text-links" *ngIf="!authService.isLoggedIn()" style="display:flex; flex-direction:column; gap:2px;">
+          <a href="#" (click)="$event.preventDefault(); authService.toggleAuthModal('login')" style="font-size:10px; color:var(--text-dim); font-weight:700;">INGRESAR</a>
+          <a href="#" (click)="$event.preventDefault(); authService.toggleAuthModal('register')" style="font-size:10px; color:var(--gold); font-weight:700;">REGISTRAR</a>
+        </div>
+
+        <div class="auth-text-links" *ngIf="authService.isLoggedIn()" style="display:flex; flex-direction:column; gap:2px;">
+          <span style="font-size:10px; color:var(--gold); font-weight:700; text-transform:uppercase;">HOLA, {{ (authService.user()?.nombre ?? '').split(' ')[0] }}</span>
+          <a href="#" (click)="$event.preventDefault(); authService.logout()" style="font-size:10px; color:var(--text-muted); font-weight:700;">CERRAR SESIÓN</a>
+        </div>
       </div>
 
       <button class="mobile-menu-btn nav-icon" (click)="toggleMobileMenu()" aria-label="Menú">
@@ -100,303 +100,16 @@
     </div>
   </nav>
 
-  <!-- UNIFIED MOBILE DRAWER -->
-  <div class="sidebar-overlay mobile-only" *ngIf="mobileMenuOpen()" (click)="toggleMobileMenu()"></div>
-  <div class="mobile-drawer" [class.open]="mobileMenuOpen()">
-    <div class="drawer-header">
-      <div class="logo-text" style="font-size:1.2rem">APEROS <span class="text-gold">PURO COLEO</span></div>
-      <button class="close-btn" (click)="toggleMobileMenu()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-      </button>
-    </div>
-
-    <div class="drawer-content">
-      <!-- Search in Drawer -->
-      <div class="drawer-search">
-        <input type="text" (input)="setSearch($event)" placeholder="¿Qué estás buscando?">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-      </div>
-
-      <!-- Navigation -->
-      <div class="drawer-section">
-        <h4 class="drawer-label">CATEGORÍAS</h4>
-        <div class="drawer-links">
-          <a *ngFor="let cat of categoryTabs" (click)="toggleMobileMenu(); setCat(cat)">{{ cat }}</a>
-        </div>
-      </div>
-
-      <!-- User Account -->
-      <div class="drawer-section">
-        <h4 class="drawer-label">CUENTA</h4>
-        <div class="drawer-auth" *ngIf="!authService.isLoggedIn()">
-          <button class="btn-gold" (click)="toggleMobileMenu(); authService.toggleAuthModal('login')">INICIAR SESIÓN</button>
-          <button class="btn-outline" (click)="toggleMobileMenu(); authService.toggleAuthModal('register')">REGISTRARSE</button>
-        </div>
-        <div class="drawer-user" *ngIf="authService.isLoggedIn()">
-          <p>Hola, <strong>{{ authService.user()?.nombre }}</strong></p>
-          <a (click)="authService.logout()">Cerrar Sesión</a>
-        </div>
-      </div>
-
-      <!-- Contact -->
-      <div class="drawer-section">
-        <h4 class="drawer-label">CONTACTO</h4>
-        <p class="drawer-info">📞 +57 321 8088933</p>
-        <p class="drawer-info">🚚 Envíos a toda Colombia</p>
-      </div>
-    </div>
+  <div class="mobile-nav" [class.open]="mobileMenuOpen()">
+    <div class="mobile-nav-item" (click)="toggleMobileMenu(); setCat('Hombre')"><a href="#Hombre"
+        (click)="$event.preventDefault()">Hombre</a></div>
+    <div class="mobile-nav-item" (click)="toggleMobileMenu(); setCat('Mujer')"><a href="#Mujer"
+        (click)="$event.preventDefault()">Mujer</a></div>
+    <div class="mobile-nav-item" (click)="toggleMobileMenu(); setCat('Niño')"><a href="#Niño"
+        (click)="$event.preventDefault()">Niño</a></div>
+    <div class="mobile-nav-item" (click)="toggleMobileMenu(); setCat('Accesorios')"><a href="#Accesorios"
+        (click)="$event.preventDefault()">Accesorios</a></div>
+    <div class="mobile-nav-item" (click)="toggleMobileMenu(); setCat('Talabarteria')"><a href="#Talabarteria"
+        (click)="$event.preventDefault()">Talabartería</a></div>
   </div>
 </header>
-
-<main>
-  <section class="hero" id="inicio">
-    <div class="hero-bg"></div>
-    <div class="hero-bg-img"></div>
-    <div class="hero-gradient"></div>
-    
-    <div class="hero-content mattelsa-hero">
-      <h1 class="hero-title luxury-title">
-        <span class="text-gold">CULTURA</span>,<br>ELEGANCIA<br>Y TRADICIÓN.
-      </h1>
-
-      <div class="hero-actions" style="margin-top: 30px;">
-        <a href="#productos" class="btn-gold btn-lg">EXPLORAR COLECCIÓN</a>
-      </div>
-    </div>
-  </section>
-
-  <div class="marquee-container">
-    <div class="marquee-content">
-      <span>TE VESTIMOS A TI Y A TU CABALLO | APEROS PURO COLEO | PRISS HATS | TE VESTIMOS A TI Y A TU CABALLO | APEROS
-        PURO COLEO | PRISS HATS | TE VESTIMOS A TI Y A TU CABALLO | APEROS PURO COLEO | PRISS HATS</span>
-      <span>TE VESTIMOS A TI Y A TU CABALLO | APEROS PURO COLEO | PRISS HATS | TE VESTIMOS A TI Y A TU CABALLO | APEROS
-        PURO COLEO | PRISS HATS | TE VESTIMOS A TI Y A TU CABALLO | APEROS PURO COLEO | PRISS HATS</span>
-    </div>
-  </div>
-
-  <!-- Categorías Visual Grid Removido -->
-
-  <div class="main-layout" id="productos">
-    <div class="content-area">
-      <ng-container *ngIf="!productoSeleccionado()">
-
-        <div class="category-tabs" style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-          <button class="tab-btn" [class.active]="categoriaActiva() === 'Todos'" (click)="setCat('Todos')">
-            Todos
-          </button>
-          <button *ngFor="let tab of categoryTabs" class="tab-btn" [class.active]="categoriaActiva() === tab"
-            (click)="setCat(tab)">
-            {{ tab }}
-          </button>
-          
-          <button *ngIf="hasActiveFilters()" class="btn-clear-filters" (click)="clearFilters()" 
-            style="background:none; border:none; color:var(--gold); font-size: 0.8rem; cursor:pointer; text-decoration: underline; padding: 8px;">
-            Limpiar Filtros
-          </button>
-        </div>
-
-        <div *ngIf="cargando()" class="loader-container">Cargando catálogo...</div>
-
-        <div *ngIf="!cargando()" class="products-grid">
-          <div class="product-card" *ngFor="let p of productosFiltrados()" (click)="verDetalle(p)"
-            style="cursor: pointer;">
-            <div class="product-image">
-              <img [src]="p.imagen" [alt]="p.nombre" loading="lazy">
-              <span class="badge" *ngIf="p.destacado">Destacado</span>
-              <button class="wishlist-btn" (click)="addToWish(); $event.stopPropagation()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2">
-                  <path
-                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
-              </button>
-            </div>
-            <div class="product-info">
-              <span class="product-category">{{ p.categoria }}</span>
-              <h3 class="product-title">{{ p.nombre }}</h3>
-              <p class="product-desc" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;">{{
-                p.descripcion }}</p>
-
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <div class="product-price">{{ p.precio | currency:'COP':'symbol-narrow':'1.0-0' }}</div>
-                <button class="add-to-cart" (click)="addToCart(); $event.stopPropagation()"
-                  aria-label="Añadir al carrito">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2">
-                    <circle cx="9" cy="21" r="1" />
-                    <circle cx="20" cy="21" r="1" />
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div *ngIf="!cargando() && productosFiltrados().length === 0" class="no-results">
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
-            stroke="#d4af37" stroke-width="1" style="margin-bottom:1rem">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          <h3>No se encontraron productos</h3>
-          <p>Intenta cambiar los filtros o los términos de búsqueda.</p>
-          <button class="btn-outline" style="margin-top:1rem" (click)="clearFilters()">Limpiar Filtros</button>
-        </div>
-
-      </ng-container>
-
-      <app-product-detail *ngIf="productoSeleccionado()" 
-        [producto]="productoSeleccionado()!" 
-        [allProducts]="productos()"
-        (onBack)="volverListado()"
-        (onAddToCart)="addToCart()" 
-        (onAddToWish)="addToWish()"
-        (onProductSelect)="verDetalle($event)">
-      </app-product-detail>
-
-    </div>
-  </div>
-
-  <!-- News Section Removida -->
-
-  <!-- Video Section (Eliminada por ahora) -->
-
-  <app-admin-panel (onDataChanged)="refreshData()"></app-admin-panel>
-  <app-auth></app-auth>
-
-  <section class="red-banner-bottom">
-    <h2 class="rb-title">¡HAZ QUE CADA OCASIÓN CUENTE!</h2>
-    <div class="rb-content">
-      <p style="margin-bottom: 2rem;">Consigue tu <strong>bono regalo</strong> y comparte la magia de Apreos Puro Coleo.
-      </p>
-    </div>
-  </section>
-
-  <!-- Sección Artesanía Removida -->
-
-  <!-- Section Nuestra Historia Removida -->
-
-  <footer class="site-footer">
-    <div class="footer-container">
-      <div class="footer-col">
-        <div style="display:flex; align-items:center; margin-bottom: 1.5rem;">
-          <span class="logo-text">APEROS</span>
-          <span class="logo-text logo-text--gold">PURO COLEO</span>
-        </div>
-        <p style="color:var(--gray-300); margin-bottom: 2rem;">
-          Forjando la tradición llanera desde Casanare. Calidad que se siente, elegancia que perdura.
-        </p>
-      </div>
-
-      <div class="footer-col">
-        <h4 class="footer-heading">Explorar</h4>
-        <div class="footer-links">
-          <a *ngFor="let link of footerExplorar" href="#">{{ link }}</a>
-        </div>
-      </div>
-
-      <div class="footer-col">
-        <h4 class="footer-heading">Ayuda</h4>
-        <div class="footer-links">
-          <a *ngFor="let link of footerAyuda" href="#">{{ link }}</a>
-        </div>
-      </div>
-
-      <div class="footer-col">
-        <h4 class="footer-heading">Boletín Exclusivo</h4>
-        <p style="color:var(--gray-300); margin-bottom: 1rem; font-size: 0.95rem;">Únete para acceso anticipado a nuevas
-          colecciones.</p>
-
-        <div class="newsletter-form" *ngIf="!subscribed()">
-          <input type="email" class="newsletter-input" placeholder="Tu correo electrónico" [value]="email()"
-            (input)="setEmail($event)">
-          <button class="btn-gold" (click)="handleSubscribe()" style="padding: 0 1.5rem;">Suscribir</button>
-        </div>
-        <div *ngIf="subscribed()"
-          style="color: var(--gold); padding: 0.75rem; border: 1px solid var(--gold); border-radius: 4px; text-align: center;">
-          ¡Gracias por unirte a la familia!
-        </div>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      <p>&copy; 2026 Aperos Puro Coleo. Todos los derechos reservados.</p>
-      <div style="display:flex; gap: 1.5rem;">
-        <a href="#">Privacidad</a>
-        <a href="#">Términos</a>
-        <a href="#">Cookies</a>
-      </div>
-    </div>
-  </footer>
-</main>
-
-<a href="https://wa.me/573218088933" target="_blank" rel="noopener noreferrer" class="whatsapp-fab"
-  aria-label="Contactar por WhatsApp">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="35" height="35" fill="white">
-    <path
-      d="M12.031 0C5.405 0 0 5.405 0 12c0 2.115.548 4.144 1.588 5.945L.057 24l6.305-1.654A11.91 11.91 0 0 0 12 24c6.623 0 12-5.377 12-12s-5.377-12-12-12v.001zm6.549 17.15c-.276.78-1.583 1.5-2.203 1.547-.585.044-1.341-.122-3.616-1.071-2.905-1.21-4.757-4.17-4.908-4.372-.152-.204-1.171-1.564-1.171-2.981 0-1.417.739-2.118 1.002-2.399.261-.282.569-.352.756-.352.189 0 .378.002.545.01.17.009.404-.065.632.485.234.565.756 1.848.824 1.99.066.14.113.303.018.491-.092.188-.142.303-.284.47-.142.167-.302.352-.426.491-.141.157-.291.33-.122.624.167.291.745 1.236 1.603 2.003 1.109.987 2.039 1.294 2.332 1.435.292.141.464.122.639-.071.174-.194.753-.872.955-1.17.202-.298.404-.248.67-.148.267.1 1.691.802 1.982.946.291.144.485.216.556.335.07.12.07.693-.205 1.472z" />
-  </svg>
-</a>
-
-<!-- Admin Panel es ahora un componente separado -->
-
-<!-- Sidebars: Carrito y Favoritos -->
-<div class="sidebar-overlay" *ngIf="isCartOpen()" (click)="toggleCart()"></div>
-<div class="sidebar-panel" [class.open]="isCartOpen()">
-  <div class="sidebar-header">
-    <h3>Tu Carrito ({{ cartCount() }})</h3>
-    <button class="close-modal-btn" (click)="toggleCart()">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </button>
-  </div>
-  <div class="sidebar-body">
-    <p *ngIf="cartCount() === 0">El carrito está vacío.</p>
-    <div *ngIf="cartCount() > 0" class="dummy-cart-item">
-      <div style="background:#2C1A0B; width:60px; height:60px; border-radius:4px;"></div>
-      <div>
-        <h4 style="font-size:0.9rem; color:#fff;">Sombrero Vueltiao</h4>
-        <p style="font-size:0.8rem; color:var(--gold)">$890.000</p>
-      </div>
-    </div>
-  </div>
-  <div class="sidebar-footer" *ngIf="cartCount() > 0">
-    <button class="btn-gold" style="width:100%">PROCEDER AL PAGO</button>
-  </div>
-</div>
-
-<div class="sidebar-overlay" *ngIf="isWishOpen()" (click)="toggleWish()"></div>
-<div class="sidebar-panel" [class.open]="isWishOpen()">
-  <div class="sidebar-header">
-    <h3>Mis Favoritos ({{ wishCount() }})</h3>
-    <button class="close-modal-btn" (click)="toggleWish()">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-      </svg>
-    </button>
-  </div>
-  <div class="sidebar-body">
-    <p *ngIf="wishCount() === 0">No tienes favoritos aún.</p>
-    <div *ngIf="wishCount() > 0" class="dummy-cart-item">
-      <div style="background:#2C1A0B; width:60px; height:60px; border-radius:4px;"></div>
-      <div>
-        <h4 style="font-size:0.9rem; color:#fff;">Cabezada Llanera Oro</h4>
-        <p style="font-size:0.8rem; color:var(--gold)">$2.400.000</p>
-      </div>
-    </div>
-  </div>
-</div>
