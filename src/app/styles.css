@@ -842,8 +842,8 @@ a {
   width: 100% !important;
   height: 100% !important;
   background-image: url('/img/logo.png') !important;
-  background-size: cover !important;
-  background-position: center right !important;
+  background-size: cover !important; 
+  background-position: center center !important;
   background-repeat: no-repeat !important;
   opacity: 0.1 !important;
   z-index: -2 !important;
@@ -1776,8 +1776,8 @@ html {
   position: absolute;
   inset: 0;
   background-image: url('/img/logo.png');
-  background-size: 50%;
-  background-position: right center;
+  background-size: cover;
+  background-position: center center;
   background-repeat: no-repeat;
   opacity: 0.12;
   z-index: 1;
