@@ -839,7 +839,7 @@ a {
   left: 0;
   width: 100% !important;
   height: 100% !important;
-  background-image: url('/public/img/logo.png') !important;
+  background-image: url('/img/logo.png') !important;
   background-size: cover !important;
   background-position: center right !important;
   background-repeat: no-repeat !important;
@@ -1774,7 +1774,7 @@ html {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url('/public/img/logo.png');
+  background-image: url('/img/logo.png');
   background-size: 50%;
   background-position: right center;
   background-repeat: no-repeat;
