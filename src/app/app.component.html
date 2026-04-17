@@ -19,11 +19,12 @@
   </div>
 
   <nav class="navbar">
-    <a href="#" style="display:flex; align-items:center; text-decoration: none;">
+    <a href="#" class="logo-wrap">
       <span class="logo-text">APEROS</span>
       <span class="logo-text logo-text--gold">PURO COLEO</span>
     </a>
 
+    <!-- Desktop Nav -->
     <div class="nav-links">
       <a href="#Hombre" (click)="$event.preventDefault(); setCat('Hombre')" class="nav-link">Hombre</a>
       <a href="#Mujer" (click)="$event.preventDefault(); setCat('Mujer')" class="nav-link">Mujer</a>
@@ -34,62 +35,54 @@
     </div>
 
     <div class="nav-actions">
-      <div class="search-box">
-        <button class="search-btn" (click)="searchTerm.set('')" *ngIf="searchTerm()" style="background:none; border:none; color:var(--gold); padding:0 8px; cursor:pointer; display:flex;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
+      <!-- Search (Desktop only inline) -->
+      <div class="search-box desktop-only">
         <input type="text" class="search-input" (input)="setSearch($event)" [value]="searchTerm()"
           placeholder="Buscar...">
-        <button class="nav-icon search-trigger" style="background:none; border:none; color:var(--gold); padding:0; display:flex;">
+        <button class="nav-icon" (click)="refreshData()">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
         </button>
       </div>
 
-      <div class="badge-wrap nav-icon" (click)="addToWish()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2">
-          <path
-            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-        </svg>
-        <span class="badge">{{ wishCount() }}</span>
-      </div>
+      <button class="nav-icon desktop-only" (click)="toggleWish()">
+        <div class="badge-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          <span class="badge">{{ wishCount() }}</span>
+        </div>
+      </button>
 
-      <div class="badge-wrap nav-icon" (click)="addToCart()">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2">
-          <circle cx="9" cy="21" r="1" />
-          <circle cx="20" cy="21" r="1" />
-          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-        </svg>
-        <span class="badge">{{ cartCount() }}</span>
-      </div>
+      <button class="nav-icon" (click)="toggleCart()">
+        <div class="badge-wrap">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1"></circle>
+            <circle cx="20" cy="21" r="1"></circle>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+          </svg>
+          <span class="badge">{{ cartCount() }}</span>
+        </div>
+      </button>
 
-      <button class="btn-gold btn-sm nav-cart-btn" (click)="addToCart()" style="border-radius:4px">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2">
-          <circle cx="9" cy="21" r="1" />
-          <circle cx="20" cy="21" r="1" />
-          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-        </svg>
+      <button class="btn-gold btn-sm nav-cart-btn desktop-only" (click)="toggleCart()">
         VER CARRITO
       </button>
 
-      <div class="nav-account-wrap" style="display:flex; align-items:center; gap:10px;">
-        <button class="nav-icon" aria-label="Cuenta" (click)="authService.isLoggedIn() ? authService.logout() : authService.toggleAuthModal('login')">
+      <div class="nav-account-wrap desktop-only" style="display:flex; align-items:center; gap:10px;">
+        <button class="nav-icon" (click)="authService.isLoggedIn() ? authService.logout() : authService.toggleAuthModal('login')">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            [attr.stroke]="authService.isAdmin() ? '#d4af37' : 'currentColor'" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-            <circle cx="12" cy="7" r="4" />
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
           </svg>
         </button>
-        
+
         <div class="auth-text-links" *ngIf="!authService.isLoggedIn()" style="display:flex; flex-direction:column; gap:2px;">
           <a href="#" (click)="$event.preventDefault(); authService.toggleAuthModal('login')" style="font-size:10px; color:var(--text-dim); font-weight:700;">INGRESAR</a>
           <a href="#" (click)="$event.preventDefault(); authService.toggleAuthModal('register')" style="font-size:10px; color:var(--gold); font-weight:700;">REGISTRAR</a>
@@ -97,37 +90,79 @@
 
         <div class="auth-text-links" *ngIf="authService.isLoggedIn()" style="display:flex; flex-direction:column; gap:2px;">
           <span style="font-size:10px; color:var(--gold); font-weight:700; text-transform:uppercase;">HOLA, {{ (authService.user()?.nombre ?? '').split(' ')[0] }}</span>
-          <a href="#" (click)="$event.preventDefault(); authService.logout()" style="font-size:10px; color:var(--text-muted);">CERRAR SESIÓN</a>
+          <a href="#" (click)="$event.preventDefault(); authService.logout()" style="font-size:10px; color:var(--text-muted); font-weight:700;">CERRAR SESIÓN</a>
         </div>
       </div>
 
       <button class="mobile-menu-btn nav-icon" (click)="toggleMobileMenu()" aria-label="Menú">
         <svg *ngIf="!mobileMenuOpen()" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-          fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="3" y1="12" x2="21" y2="12" />
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="3" y1="18" x2="21" y2="18" />
+          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
         </svg>
         <svg *ngIf="mobileMenuOpen()" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-          fill="none" stroke="#d4af37" stroke-width="2">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
+          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
     </div>
   </nav>
 
-  <div class="mobile-nav" [class.open]="mobileMenuOpen()">
-    <div class="mobile-nav-item" (click)="toggleMobileMenu(); setCat('Hombre')"><a href="#Hombre"
-        (click)="$event.preventDefault()">Hombre</a></div>
-    <div class="mobile-nav-item" (click)="toggleMobileMenu(); setCat('Mujer')"><a href="#Mujer"
-        (click)="$event.preventDefault()">Mujer</a></div>
-    <div class="mobile-nav-item" (click)="toggleMobileMenu(); setCat('Niño')"><a href="#Niño"
-        (click)="$event.preventDefault()">Niño</a></div>
-    <div class="mobile-nav-item" (click)="toggleMobileMenu(); setCat('Accesorios')"><a href="#Accesorios"
-        (click)="$event.preventDefault()">Accesorios</a></div>
-    <div class="mobile-nav-item" (click)="toggleMobileMenu(); setCat('Talabarteria')"><a href="#Talabarteria"
-        (click)="$event.preventDefault()">Talabartería</a></div>
+  <!-- UNIFIED MOBILE DRAWER -->
+  <div class="sidebar-overlay mobile-only" *ngIf="mobileMenuOpen()" (click)="toggleMobileMenu()"></div>
+  <div class="mobile-drawer" [class.open]="mobileMenuOpen()">
+    <div class="drawer-header">
+      <div class="logo-text" style="font-size:1.2rem">APEROS <span class="text-gold">PURO COLEO</span></div>
+      <button class="close-btn" (click)="toggleMobileMenu()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="drawer-content">
+      <!-- Search in Drawer -->
+      <div class="drawer-search">
+        <input type="text" (input)="setSearch($event)" placeholder="¿Qué estás buscando?">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </div>
+
+      <!-- Navigation -->
+      <div class="drawer-section">
+        <h4 class="drawer-label">CATEGORÍAS</h4>
+        <div class="drawer-links">
+          <a *ngFor="let cat of categoryTabs" (click)="toggleMobileMenu(); setCat(cat)">{{ cat }}</a>
+        </div>
+      </div>
+
+      <!-- User Account -->
+      <div class="drawer-section">
+        <h4 class="drawer-label">CUENTA</h4>
+        <div class="drawer-auth" *ngIf="!authService.isLoggedIn()">
+          <button class="btn-gold" (click)="toggleMobileMenu(); authService.toggleAuthModal('login')">INICIAR SESIÓN</button>
+          <button class="btn-outline" (click)="toggleMobileMenu(); authService.toggleAuthModal('register')">REGISTRARSE</button>
+        </div>
+        <div class="drawer-user" *ngIf="authService.isLoggedIn()">
+          <p style="margin-bottom:10px;">Hola, <strong>{{ authService.user()?.nombre }}</strong></p>
+          <button class="btn-outline btn-sm" (click)="toggleMobileMenu(); authService.logout()">Cerrar Sesión</button>
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <div class="drawer-section">
+        <h4 class="drawer-label">CONTACTO</h4>
+        <p class="drawer-info">📞 +57 321 8088933</p>
+        <p class="drawer-info">🚚 Envíos a toda Colombia</p>
+      </div>
+    </div>
   </div>
 </header>
 
