@@ -1735,6 +1735,13 @@ button {
     display: none !important;
   }
 
+  .hero-bg-img {
+    background-position: center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.15;
+  }
+
   .hero-content {
     padding: 0 24px;
     padding-top: 100px;
