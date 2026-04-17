@@ -262,6 +262,7 @@ button {
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid var(--border);
+  position: relative;
 }
 
 .logo-text {
@@ -275,6 +276,31 @@ button {
 .logo-text--gold {
   color: var(--gold);
   margin-left: 6px;
+}
+
+/* ── Search Box ── */
+.search-box {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  transition: all 0.3s ease;
+}
+
+.search-input {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  outline: none;
+  width: 140px;
+  transition: width 0.3s ease;
+}
+
+.search-input:focus {
+  width: 180px;
 }
 
 /* Nav links */
@@ -1662,6 +1688,10 @@ button {
   .hero-title {
     font-size: 3.5rem;
   }
+
+  .search-input {
+    width: 100px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -1669,25 +1699,59 @@ button {
     display: none;
   }
 
+  .topbar {
+    padding: 6px 15px;
+    font-size: 10px;
+  }
+
+  .navbar {
+    padding: 0 15px;
+    height: 60px;
+  }
+
+  .logo-text {
+    font-size: 16px;
+  }
+
+  .nav-actions {
+    gap: 12px;
+  }
+
+  .search-box {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: var(--bg-dark);
+    padding: 10px 15px;
+    border-radius: 0;
+    z-index: 99;
+    display: none; /* Se podría activar con un trigger en el futuro */
+  }
+
+  /* Ocultamos elementos redundantes en móvil para limpiar el header */
+  .auth-text-links, 
+  .nav-cart-btn {
+    display: none !important;
+  }
+
   .hero-content {
     padding: 0 24px;
     padding-top: 100px;
+    text-align: center;
   }
 
   .hero-title {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
+    margin: 0 auto 24px;
+  }
+
+  .hero-actions {
+    justify-content: center;
   }
 
   .main-content {
     padding: 30px 20px;
-  }
-
-  .craft-section {
-    grid-template-columns: 1fr;
-  }
-
-  .testimonials-grid {
-    grid-template-columns: 1fr;
   }
 
   .site-footer {
@@ -1699,36 +1763,22 @@ button {
     gap: 32px;
   }
 
-  .newsletter-section {
-    padding: 40px 24px;
-  }
-
-  .categories-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
   .products-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
 }
 
 @media (max-width: 480px) {
   .hero-title {
-    font-size: 2rem;
+    font-size: 2.2rem;
   }
 
-  .section-title {
-    font-size: 1.8rem;
-  }
-
-  .categories-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .hero-actions {
-    flex-direction: column;
-  }
-
+  .logo-text { font-size: 14px; }
+  .topbar { flex-direction: column; gap: 4px; text-align: center; padding: 8px; }
+  .navbar { padding: 0 10px; }
+  .nav-actions { gap: 8px; }
+  .hero-actions { flex-direction: column; width: 100%; }
+  .hero-actions .btn-gold { width: 100%; justify-content: center; }
   .footer-bottom {
     flex-direction: column;
     gap: 16px;
