@@ -1718,21 +1718,23 @@ button {
   }
 
   .search-box {
-    position: absolute;
-    top: 60px;
-    left: 0;
-    right: 0;
-    background: var(--bg-dark);
-    padding: 10px 15px;
-    border-radius: 0;
-    z-index: 99;
-    display: none; /* Se podría activar con un trigger en el futuro */
+    display: flex;
+    width: auto;
+    background: none;
+    border: none;
   }
 
-  /* Ocultamos elementos redundantes en móvil para limpiar el header */
-  .auth-text-links, 
+  .search-input {
+    display: none; /* Se oculta el input pero se deja el icono */
+  }
+
+  .auth-text-links {
+    display: flex !important;
+    gap: 4px;
+  }
+
   .nav-cart-btn {
-    display: none !important;
+    display: none !important; /* El botón largo sigue oculto, pero el icono con badge (div anterior) sigue visible */
   }
 
   .hero-bg-img {
