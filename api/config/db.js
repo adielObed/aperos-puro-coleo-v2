@@ -6,7 +6,7 @@ const connectDB = async () => {
     console.log('🤠 ¡Conectado a la base de datos de Aperos Puro Coleo!');
   } catch (err) {
     console.error('❌ Error de conexión:', err);
-    process.exit(1);
+    // No salimos del proceso para evitar que Vercel marque el despliegue como fallido por pre-warm
   }
 };
 
