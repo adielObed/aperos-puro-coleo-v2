@@ -839,12 +839,13 @@ a {
   left: 0;
   width: 100% !important;
   height: 100% !important;
-  object-fit: cover !important;
-  opacity: 1 !important;
-  /* Imagen completamente visible */
+  background-image: url('/public/img/logo.png') !important;
+  background-size: cover !important;
+  background-position: center right !important;
+  background-repeat: no-repeat !important;
+  opacity: 0.1 !important;
   z-index: -2 !important;
   display: block !important;
-  overflow: hidden !important;
 }
 
 /* 3. RECENTRAR EL CONTENIDO */
@@ -1773,7 +1774,7 @@ html {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url('/img/logo.png');
+  background-image: url('/public/img/logo.png');
   background-size: 50%;
   background-position: right center;
   background-repeat: no-repeat;
@@ -1781,6 +1782,14 @@ html {
   z-index: 1;
   filter: grayscale(100%) brightness(1.5);
   pointer-events: none;
+}
+
+@media (max-width: 1024px) {
+  .hero::before {
+    background-position: center center !important;
+    background-size: contain !important;
+    opacity: 0.15 !important;
+  }
 }
 
 /* Quitamos la capa hero::after que oscurecía la pantalla */
