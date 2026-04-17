@@ -1788,7 +1788,7 @@ html {
 @media (max-width: 1024px) {
   .hero::before {
     background-position: center center !important;
-    background-size: contain !important;
+    background-size: cover !important;
     opacity: 0.15 !important;
   }
 }

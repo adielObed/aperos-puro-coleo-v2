@@ -1739,7 +1739,7 @@ button {
 
   .hero-bg-img {
     background-position: center center;
-    background-size: contain;
+    background-size: cover;
     background-repeat: no-repeat;
     opacity: 0.15;
   }
