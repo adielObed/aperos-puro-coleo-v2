@@ -145,11 +145,13 @@ a {
   color: var(--gold);
 }
 
-/* --- BUSCADOR Y ACCIONES (Arreglado) --- */
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 1.2rem;
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .mobile-only { display: block; }
+  .desktop-only { display: none !important; }
 }
 
 .search-box {
@@ -1797,11 +1799,122 @@ html {
   display: none !important;
 }
 
+/* ── MOBILE DRAWER STYLES ── */
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100vh;
+  background: #0D0D0D;
+  z-index: 2000;
+  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 10px 0 30px rgba(0,0,0,0.8);
+  border-right: 1px solid var(--gold-dark);
+}
+
+.mobile-drawer.open {
+  left: 0;
+}
+
+.drawer-header {
+  padding: 24px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.drawer-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.drawer-search {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.drawer-search input {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  padding: 12px 40px 12px 16px;
+  color: #fff;
+  border-radius: 8px;
+}
+
+.drawer-search lucide-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gold);
+}
+
+.drawer-section {
+  margin-bottom: 32px;
+}
+
+.drawer-label {
+  font-size: 0.75rem;
+  color: var(--gold);
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+
+.drawer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.drawer-links a {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.drawer-auth {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.drawer-info {
+  color: #888;
+  font-size: 0.9rem;
+  margin: 4px 0;
+}
+
+.hero {
+  background: var(--bg-darkest) !important;
+  position: relative;
+  overflow: hidden;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  min-height: 85vh !important;
+}
+
 .hero-content {
   position: relative;
   z-index: 3;
   width: 100%;
-  max-width: 800px !important;
+  max-width: 90%;
+}
+
+@media (max-width: 768px) {
+  .luxury-title {
+    font-size: clamp(2.5rem, 12vw, 4rem) !important;
+    letter-spacing: -1px !important;
+  }
 }
 
 /* FULL WIDTH VISUAL GRID CATEGORIES RESTRUCTURE */
