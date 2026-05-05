@@ -19,9 +19,12 @@
   </div>
 
   <nav class="navbar">
-    <a href="#" class="logo-wrap">
-      <span class="logo-text">APEROS</span>
-      <span class="logo-text logo-text--gold">PURO COLEO</span>
+    <a href="#" class="logo-wrap" style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+      <img src="img/logo.png" alt="Aperos Puro Coleo" style="height: 45px; width: auto;">
+      <div style="display: flex; flex-direction: column; line-height: 0.9;">
+        <span class="logo-text" style="font-size: 15px; letter-spacing: 0.02em;">APEROS</span>
+        <span class="logo-text logo-text--gold" style="font-size: 15px; margin-left: 0; letter-spacing: 0.02em;">PURO COLEO</span>
+      </div>
     </a>
 
     <!-- Desktop Nav -->
@@ -83,12 +86,12 @@
           </svg>
         </button>
 
-        <div class="auth-text-links" *ngIf="!authService.isLoggedIn()" style="display:flex; flex-direction:column; gap:2px;">
+        <div class="auth-text-links desktop-only" *ngIf="!authService.isLoggedIn()" style="display:flex; flex-direction:column; gap:2px;">
           <a href="#" (click)="$event.preventDefault(); authService.toggleAuthModal('login')" style="font-size:10px; color:var(--text-dim); font-weight:700;">INGRESAR</a>
           <a href="#" (click)="$event.preventDefault(); authService.toggleAuthModal('register')" style="font-size:10px; color:var(--gold); font-weight:700;">REGISTRAR</a>
         </div>
 
-        <div class="auth-text-links" *ngIf="authService.isLoggedIn()" style="display:flex; flex-direction:column; gap:2px;">
+        <div class="auth-text-links desktop-only" *ngIf="authService.isLoggedIn()" style="display:flex; flex-direction:column; gap:2px;">
           <span style="font-size:10px; color:var(--gold); font-weight:700; text-transform:uppercase;">HOLA, {{ (authService.user()?.nombre ?? '').split(' ')[0] }}</span>
           <a href="#" (click)="$event.preventDefault(); authService.logout()" style="font-size:10px; color:var(--text-muted); font-weight:700;">CERRAR SESIÓN</a>
         </div>
@@ -114,7 +117,10 @@
   <div class="sidebar-overlay mobile-only" *ngIf="mobileMenuOpen()" (click)="toggleMobileMenu()"></div>
   <div class="mobile-drawer" [class.open]="mobileMenuOpen()">
     <div class="drawer-header">
-      <div class="logo-text" style="font-size:1.2rem">APEROS <span class="text-gold">PURO COLEO</span></div>
+      <div class="logo-wrap" style="display: flex; align-items: center; gap: 10px;">
+        <img src="img/logo.png" alt="Logo" style="height: 40px; width: auto;">
+        <div class="logo-text" style="font-size:1.1rem; line-height: 1;">APEROS <span class="text-gold">PURO COLEO</span></div>
+      </div>
       <button class="close-btn" (click)="toggleMobileMenu()">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -298,9 +304,12 @@
   <footer class="site-footer">
     <div class="footer-container">
       <div class="footer-col">
-        <div style="display:flex; align-items:center; margin-bottom: 1.5rem;">
-          <span class="logo-text">APEROS</span>
-          <span class="logo-text logo-text--gold">PURO COLEO</span>
+        <div style="display:flex; align-items:center; gap: 12px; margin-bottom: 1.5rem;">
+          <img src="img/logo.png" alt="Logo Footer" style="height: 60px; width: auto;">
+          <div style="display: flex; flex-direction: column; line-height: 1;">
+            <span class="logo-text">APEROS</span>
+            <span class="logo-text logo-text--gold" style="margin-left: 0;">PURO COLEO</span>
+          </div>
         </div>
         <p style="color:var(--gray-300); margin-bottom: 2rem;">
           Forjando la tradición llanera desde Casanare. Calidad que se siente, elegancia que perdura.
