@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: '/api' // En AWS con integración, se usa la ruta relativa
+  apiUrl: 'http://3.14.87.26:3000/api'
 };
