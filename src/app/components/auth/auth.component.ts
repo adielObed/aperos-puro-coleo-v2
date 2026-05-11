@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-auth',
@@ -65,8 +66,8 @@ import { AuthService } from '../../services/auth.service';
                <label>Contraseña</label>
                <input type="password" [(ngModel)]="registerData.password" name="password" placeholder="Mínimo 6 caracteres" required>
              </div>
-             <!-- OPCIÓN ADMIN SOLO PARA PRUEBAS -->
-             <div class="form-group checkbox-group" style="margin-top: 10px;">
+             <!-- OPCIÓN ADMIN SOLO PARA PRUEBAS (OCULTA EN PRODUCCIÓN) -->
+             <div class="form-group checkbox-group" style="margin-top: 10px;" *ngIf="isDevelopment">
                 <input type="checkbox" id="adminCheck" [(ngModel)]="registerData.rol" name="rol" (change)="registerData.rol = $any($event.target).checked ? 'admin' : 'customer'">
                 <label for="adminCheck" style="color:var(--gold); font-size: 0.7rem; cursor:pointer;">MODO ADMINISTRADOR (SOLO DESARROLLO)</label>
              </div>
@@ -212,6 +213,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class AuthComponent {
   authService = inject(AuthService);
+  isDevelopment = !environment.production;
   
   mode = this.authService.authMode;
   loading = signal(false);

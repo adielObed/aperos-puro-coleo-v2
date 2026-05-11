@@ -6,8 +6,15 @@ const connectDB = require('./config/db');
 const app = express();
 
 // ── 1. CONFIGURACIÓN MIDDLEWARE ──
+const allowedOrigins = [
+  'http://localhost:4200', 
+  'http://127.0.0.1:4200', 
+  'https://aperos-puro-coleo-v2.vercel.app'
+];
+if (process.env.FRONTEND_URL) allowedOrigins.push(process.env.FRONTEND_URL);
+
 app.use(cors({
-  origin: ['http://localhost:4200', 'http://127.0.0.1:4200', 'https://aperos-puro-coleo-v2.vercel.app'],
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
 app.use(express.json());
@@ -21,12 +28,10 @@ app.use('/api/productos', require('./routes/product.routes'));
 app.use('/api/categories', require('./routes/category.routes'));
 app.use('/api/users', require('./routes/user.routes'));
 
-// ── 4. INICIAR SERVIDOR (Solo local) ──
-if (process.env.NODE_ENV !== 'production') {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`🚀 Servidor galopando en http://localhost:${PORT}`);
-  });
-}
+// ── 4. INICIAR SERVIDOR ──
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor galopando en el puerto ${PORT}`);
+});
 
 module.exports = app;

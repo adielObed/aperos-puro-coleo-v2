@@ -6,11 +6,13 @@
 import { Component, OnInit, signal, computed, inject, HostListener } from '@angular/core';
 import { CommonModule }  from '@angular/common';
 import { FormsModule }   from '@angular/forms';
-import { ProductService, Producto } from './product.service';
+import { ProductService, Producto } from './services/product.service';
 import { AuthService } from './services/auth.service';
+import { CartService } from './services/cart.service';
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 import { AdminPanelComponent } from './components/admin-panel/admin-panel.component';
 import { AuthComponent } from './components/auth/auth.component';
+import { CheckoutComponent } from './components/checkout/checkout.component';
 import { 
   LucideAngularModule, ShoppingCart, Search, User, Heart, Menu, X, Star, ChevronDown, Instagram, Facebook, Mail, Phone, Edit, Trash2, Plus 
 } from 'lucide-angular';
@@ -18,7 +20,7 @@ import {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, ProductDetailComponent, AdminPanelComponent, AuthComponent],
+  imports: [CommonModule, FormsModule, LucideAngularModule, ProductDetailComponent, AdminPanelComponent, AuthComponent, CheckoutComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./styles.css']
 })
@@ -26,6 +28,7 @@ export class AppComponent implements OnInit {
 
   private productService = inject(ProductService);
   public authService = inject(AuthService);
+  public cartService = inject(CartService);
 
   // ── State ──────────────────────────────────────────────
   productos             = signal<Producto[]>([]);
@@ -38,8 +41,8 @@ export class AppComponent implements OnInit {
   precioMax             = signal(800000);
   headerScrolled        = signal(false);
   mobileMenuOpen        = signal(false);
-  cartCount             = signal(3);
-  wishCount             = signal(2);
+  cartCount             = this.cartService.cartCount;
+  wishCount             = this.cartService.wishCount;
   priceRange            = signal(30);
   selectedMaterials     = signal<string[]>([]);
   email                 = signal('');
@@ -55,6 +58,7 @@ export class AppComponent implements OnInit {
 
   // ── Admin & Modal State ────────────────────────────────
   showModal = signal(false);
+  isCheckoutOpen = signal(false);
   modalMode = signal<'create' | 'edit'>('create');
   isSaving = signal(false);
   
@@ -155,13 +159,13 @@ export class AppComponent implements OnInit {
     // Llamar al backend con el término de búsqueda si existe (Sincronización Backend/Frontend)
     const term = this.searchTerm();
     this.productService.getProductos(term).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         if(res.status === 'ok') {
           this.productos.set(res.data);
           this.cargando.set(false);
         }
       },
-      error: (err) => {
+      error: (err: any) => {
         this.errorMsg.set('Error al cargar productos');
         this.cargando.set(false);
       }
@@ -169,7 +173,7 @@ export class AppComponent implements OnInit {
 
     // Traer categorías de Node.js
     this.productService.getCategories().subscribe({
-      next: (res) => {
+      next: (res: any) => {
         if(res.status === 'ok') this.categoriasBaseDeDatos.set(res.data);
       }
     });
@@ -181,19 +185,23 @@ export class AppComponent implements OnInit {
   }
 
   // ── Handlers ───────────────────────────────────────────
-  addToCart():  void { 
-    this.cartCount.update(c => c + 1); 
+  addToCart(p: Producto):  void { 
+    this.cartService.addToCart(p);
     this.isCartOpen.set(true);
   }
   
-  addToWish():  void { 
-    this.wishCount.update(c => c + 1); 
-    this.isWishOpen.set(true);
+  addToWish(p: Producto):  void { 
+    this.cartService.toggleWish(p);
   }
   
   toggleCart(): void { this.isCartOpen.update(v => !v); }
   toggleWish(): void { this.isWishOpen.update(v => !v); }
   toggleMobileMenu(): void { this.mobileMenuOpen.update(v => !v); }
+
+  openCheckout(): void {
+    this.isCartOpen.set(false);
+    this.isCheckoutOpen.set(true);
+  }
 
   setCat(c: string): void { 
     this.categoriaActiva.set(c); 
@@ -290,7 +298,7 @@ export class AppComponent implements OnInit {
     
     if (this.modalMode() === 'create') {
       this.productService.createProducto(data).subscribe({
-        next: (res) => {
+        next: (res: any) => {
           if (res.status === 'ok') {
             this.productos.update(list => [...list, res.data]);
             this.closeModal();
@@ -302,7 +310,7 @@ export class AppComponent implements OnInit {
     } else {
       if (data._id) {
         this.productService.updateProducto(data._id, data).subscribe({
-          next: (res) => {
+          next: (res: any) => {
             if (res.status === 'ok') {
               this.productos.update(list => list.map(p => p._id === data._id ? res.data : p));
               this.closeModal();
@@ -319,7 +327,7 @@ export class AppComponent implements OnInit {
     if (!id) return;
     if (confirm('¿Estás seguro que deseas eliminar el producto? Esta acción no se puede deshacer.')) {
       this.productService.deleteProducto(id).subscribe({
-        next: (res) => {
+        next: (res: any) => {
           if (res.status === 'ok') {
             this.productos.update(list => list.filter(p => p._id !== id));
           }

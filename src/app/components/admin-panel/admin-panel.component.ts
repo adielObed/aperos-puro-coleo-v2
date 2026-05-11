@@ -1,7 +1,7 @@
 import { Component, inject, signal, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ProductService, Producto } from '../../product.service';
+import { ProductService, Producto } from '../../services/product.service';
 import { AuthService, User } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 
@@ -311,10 +311,10 @@ export class AdminPanelComponent implements OnInit {
   }
 
   loadInitialData() {
-    this.productService.getProductos().subscribe(res => {
+    this.productService.getProductos().subscribe((res: any) => {
       if(res.status === 'ok') this.productos.set(res.data);
     });
-    this.userService.getUsers().subscribe(res => {
+    this.userService.getUsers().subscribe((res: any) => {
       if(res.status === 'success') this.users.set(res.data.users);
     });
   }
@@ -342,7 +342,7 @@ export class AdminPanelComponent implements OnInit {
       : this.productService.createProducto(this.productoForm as Producto);
 
     obs.subscribe({
-      next: (res) => {
+      next: (res: any) => {
         if(res.status === 'ok') {
            alert("¡Producto " + (this.editingId() ? 'actualizado' : 'guardado') + " exitosamente!");
            this.resetForm();
@@ -352,7 +352,7 @@ export class AdminPanelComponent implements OnInit {
         }
         this.isSaving.set(false);
       },
-      error: (err) => {
+      error: (err: any) => {
         alert("Error: " + (err.error?.message || err.message));
         this.isSaving.set(false);
       }
@@ -393,7 +393,7 @@ export class AdminPanelComponent implements OnInit {
     
     this.isSaving.set(true);
     this.productService.createCategory(this.categoriaForm).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         if(res.status === 'ok') {
            alert("¡Categoría guardada exitosamente!");
            this.categoriaForm = { name: '', img: '' };
@@ -401,7 +401,7 @@ export class AdminPanelComponent implements OnInit {
         }
         this.isSaving.set(false);
       },
-      error: (err) => {
+      error: (err: any) => {
         alert("Error: " + (err.error?.message || err.message));
         this.isSaving.set(false);
       }

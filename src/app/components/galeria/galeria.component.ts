@@ -1,27 +1,26 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProductoService } from '../../services/producto.service'; 
+import { ProductService } from '../../services/product.service'; 
 
 @Component({
   selector: 'app-galeria',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './galeria.component.html', // Verifica que este archivo exista en la misma carpeta
-  styleUrl: './galeria.component.css'    // Verifica que este archivo exista en la misma carpeta
+  templateUrl: './galeria.component.html',
+  styleUrl: './galeria.component.css'
 })
 export class GaleriaComponent implements OnInit {
   productos: any[] = [];
-
-  constructor(private productoService: ProductoService) {}
+  private productService = inject(ProductService);
 
   ngOnInit(): void {
-    this.productoService.getProductos().subscribe({
-      // Agregamos ": any" para que TypeScript no se queje
-      next: (res: any) => {
-        this.productos = res.data;
-        console.log('Productos cargados:', this.productos);
+    this.productService.getProductos().subscribe({
+      next: (res) => {
+        if (res.status === 'ok') {
+          this.productos = res.data;
+        }
       },
-      error: (err: any) => {
+      error: (err) => {
         console.error('Error al conectar con Node.js', err);
       }
     });
